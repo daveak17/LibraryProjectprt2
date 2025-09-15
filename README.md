@@ -1,49 +1,58 @@
-# e‑Shelf Library 📚
+# e-Shelf Library 📚
 
-A simple PHP + MySQL mini library system (insert/search/borrow).
+A simple **PHP + MySQL** mini library system to insert, search/filter, and borrow books.
+
+---
 
 ## Features
 - Insert books into the database
-- Search & filter results (PHP + MySQL)
-- Borrow books (decrements copies + records a borrow entry)
+- Search & filter by title/category/year
+- Borrow books (decrements copies and logs a borrow entry)
+- Book pages fetch **live available copies** on load via `book_info.php`
 
-## Requirements
-- PHP 7.4+ (works on PHP 8.x)
-- MySQL/MariaDB
-- XAMPP/MAMP/WAMP (locally) or any PHP host with MySQL
+## Tech stack
+- PHP 7.4+ (works on 8.x)
+- MySQL / MariaDB
+- Bootstrap 4
+- (Local dev) XAMPP/MAMP/WAMP
 
-## Setup (Local with XAMPP)
-1) Copy this folder to your web root, e.g.
+---
+
+## Quick start (Local with XAMPP)
+
+1. **Copy the project** to your web root, e.g.  
    `C:\xampp\htdocs\LibraryProjectprt2\`
-2) Start **Apache** and **MySQL** from XAMPP.
-3) Open **phpMyAdmin** → **Import** → select `library_db.sql` → Run.
-4) Create your DB config:
-   - If `db.php` is ignored (recommended for public repos), copy `db.example.php` → `db.php` and set your credentials:
+
+2. **Start** Apache and MySQL from XAMPP.
+
+3. **Create the database**  
+   - Open **phpMyAdmin** → **Import** → select `library_db.sql` → **Go**.
+
+4. **DB config (local only)**  
+   - `db.php` is **ignored** in this public repo.  
+   - Copy `db.example.php` → **`db.php`** and set your local credentials:
      ```php
      $DB_HOST = 'localhost';
      $DB_USER = 'root';
-     $DB_PASS = '';          // set password if you use one
+     $DB_PASS = '';         // set a password if you use one
      $DB_NAME = 'library_db';
      ```
-5) Open the app:
-   - `http://localhost/LibraryProjectprt2/index.html`
-   - `http://localhost/LibraryProjectprt2/search_results.php`
 
-## Notes
-- Keep only **one** search page: `search_results.php` (delete/ignore the demo `search_results.html`).
-- Book detail pages use `fetch('borrow.php', { ... })`. Ensure it’s a **relative** path.
-- Recommended to centralize DB connection in `db.php` and include it in PHP files with:
-  ```php
-  require_once __DIR__ . '/db.php';
-  ```
+5. **Run it**  
+   - Home: `http://localhost/LibraryProjectprt2/index.html`  
+   - Search: `http://localhost/LibraryProjectprt2/search_results.php`
 
-## File map (important bits)
-- `index.html` — Home page
-- `insert_book.html` — Insert book form (POST → `insert_book.php`)
-- `search_results.php` — Real DB search & filter
-- `borrow.php` — Borrow action endpoint
-- `library_db.sql` — Database schema + sample data
-- `db.example.php` — Safe template for DB config (copy to `db.php` locally)
+> Tip: keep only one search page: **`search_results.php`** (the real DB page).  
+> If you see a `search_results.html` demo, remove it.
 
-## License
-MIT (or your choice).
+---
+
+## Endpoints (PHP)
+- `search_results.php` — search & filter UI (queries `book` table)  
+- `borrow.php` — POST `book_title` → decrements copies + inserts into `borrow`  
+- `book_info.php` — GET `book_title` (or `book_id`) → returns JSON with live `copies`  
+- `insert_book.php` — handles inserts from `insert_book.html`
+
+All DB-using files include the central connection:
+```php
+require_once __DIR__ . '/db.php';
