@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Library Project: Discover, borrow, and explore your favorite books.">
+  <title>Χνότα στο τζάμι</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+
+
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="index.html">
+      <img src="images/logo.png" alt="Library Logo" class="navbar-logo" />
+      e-Shelf
+    </a>    
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="insert_book.html">Insert Book</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="search_results.php">Search Results</a>
+        </li>
+      </ul>
+      <form class="form-inline ml-auto" action="search_results.php" method="get" role="search">
+        <input
+          class="form-control mr-sm-2"
+          type="search"
+          name="query"
+          placeholder="Search by title"
+          aria-label="Search for books"
+        />
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mt-5">
+    <h2 class="text-center">Χνότα στο τζάμι</h2>
+    <div class="card mx-auto">
+      <img src="images/book3.png" class="card-img-top" alt="Cover of the book 'Χνότα στο τζάμι'">
+      <div class="card-body">
+        <h5 class="card-title"><strong>Author:</strong> Παπαθεοδώρου Βασίλης</h5>
+        <p class="card-text">
+          <strong>Summary:</strong> <em>Χνότα στο τζάμι</em> by <em>Παπαθεοδώρου Βασίλης</em> is a poignant and thought-provoking novel that reflects on the themes of resilience, 
+          survival, and human dignity in the face of adversity. Set against the backdrop of historical and social turbulence, 
+          the story unfolds through interconnected narratives that reveal the impact of personal choices and external circumstances on individuals' lives. 
+          With vivid imagery and emotional depth, Papatheodorou crafts a tale that lingers in the reader's mind, much like the fleeting mark of breath on glass, 
+          symbolizing both fragility and endurance.
+        </p>
+        <br>
+        <h6><strong>Published:</strong>2007</h6>
+        <p><strong>Category:</strong> Literacy Fiction</p>
+        <p><strong>Available Copies:</strong> <span id="availableCopies">18</span></p>
+        <button class="btn btn-primary btn-block" id="borrowButton">Borrow</button>
+        <p class="text-success mt-2" id="borrowFeedback"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-3">
+    <p>&copy; 2024 Library Project. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    document.getElementById('borrowButton').addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const bookTitle = "Χνότα στο τζάμι";
+      const availableCopiesElement = document.getElementById('availableCopies');
+      const feedbackElement = document.getElementById('borrowFeedback');
+
+      fetch('borrow.php', { // Update the path if needed
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `book_title=${encodeURIComponent(bookTitle)}`
+      })
+        .then(response => response.text())
+        .then(data => {
+          feedbackElement.textContent = data;
+
+          const currentCopies = parseInt(availableCopiesElement.textContent, 10);
+          if (!isNaN(currentCopies) && currentCopies > 0) {
+            availableCopiesElement.textContent = currentCopies - 1;
+          }
+        })
+        .catch(error => {
+          feedbackElement.textContent = "An error occurred. Please try again.";
+          console.error("Error:", error);
+        });
+    });
+  </script>
+</body>
+</html>

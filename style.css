@@ -1,0 +1,153 @@
+* {
+    font-family: serif;
+}
+
+/* Background color for the entire body */
+body {
+    background-color: #ddac75;
+    padding-top: 100px; 
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Navbar styling */
+.navbar {
+    font-size: 22px;
+    background-color: #ffddb1 !important;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 100px;
+    gap: 6rem;
+    position: fixed; 
+    top: 0;
+    left: 0;
+    z-index: 1000; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+/* Navbar Brand Styling */
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #9e1212 !important; 
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); 
+    display: flex;
+    align-items: center; 
+    font-family: Palatino, URW Palladio L, serif;
+    padding: 0;
+}
+
+.navbar .nav-item {
+    margin-right: 1.5rem;
+}
+
+/* Navbar Logo Styling */
+.navbar-brand img {
+    height: 70px; 
+    width: auto; 
+    margin-bottom: 0px;
+    border-radius: 5px; 
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.5rem; 
+    }
+
+    .navbar-brand img {
+        height: 90px; 
+    }
+}
+
+/* Center-aligning main headings */
+h1 {
+    text-align: center;
+}
+
+/* Card styling */
+.card {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+
+/* Footer styling */
+footer {
+    background-color: #ffddb1 !important;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #333;
+}
+
+/* General container and footer adjustments */
+.container {
+    flex: 1;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar .nav-item .active {
+    font-weight: bold;
+    color: #9e1212 !important;
+}
+
+.card-img-top {
+    max-width: 300px;
+    height: auto;
+    margin: 30px auto;
+    width: 100%; 
+    object-fit: cover; 
+    border-radius: 15px; 
+}
+
+.mx-auto{
+    max-width: 600px;
+}
+  
+  h2.text-center, h1, h2 {
+    font-family: 'Georgia', serif; 
+    font-size: 2.5rem; 
+    color: #2c3e50; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+    margin-bottom: 20px; 
+  }
+
+  h2{
+    font-size: 25px;
+  }
+
+  
+#borrowButton, .btn-primary {
+    background-color: #9e1212; 
+    border-color: #ffffff;
+  }
+
+/* Hover, focus, and active states */
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #6e0d0d !important; 
+    border-color: #ffffff !important;
+    color: #ffffff !important; 
+    text-decoration: none !important; 
+    box-shadow: none !important; 
+}
+
+.input-group {
+    width: 80%; 
+    margin: 0 auto; 
+}
+

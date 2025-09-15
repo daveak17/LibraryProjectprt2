@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insert a New Book</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">
+            <img src="images/logo.png" alt="Library Logo" class="navbar-logo" />
+            <strong>e-Shelf</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" href="insert_book.php">Insert Book</a></li>
+                <li class="nav-item"><a class="nav-link" href="search_results.php">Search Results</a></li>
+            </ul>
+            <form class="form-inline ml-auto" action="search_results.php" method="get" role="search">
+                <input
+                  class="form-control mr-sm-2"
+                  type="search"
+                  name="query"
+                  placeholder="Search by title"
+                  aria-label="Search for books"
+                />
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+              </form>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">Insert a New Book</h2>
+        <div class="card shadow p-4">
+        <form method="POST" action="insert_book.php">
+                <!-- Title and Author -->
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter book title" title="Only letters, numbers, dashes, commas." required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="author">Author</label>
+                        <input type="text" class="form-control" id="author" name="author" placeholder="Enter author name" title="Only letters, numbers, dashes, commas." required>
+                    </div>
+                </div>
+
+                <!-- Year and Condition -->
+                <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="year">Year of Publication</label>
+                    <select class="form-control" id="year" name="year" title="Choose a year between 1900 and 2025."></select>
+                    <!-- Hidden input to store year value -->
+                    <input type="hidden" id="hiddenYear" name="year">
+                </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="condition">Condition</label>
+                        <select class="form-control" id="condition" name="condition" title="Select the book's condition." required>
+                            <option value="new">New</option>
+                            <option value="used">Used</option>
+                            <option value="unknown">Unknown</option>
+                        </select>
+
+
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Provide a brief description" maxlength="300" title="max 300 characters."></textarea>
+                </div>
+
+                <!-- Number of Copies -->
+                <div class="form-group">
+                    <label for="copies">Number of Copies</label>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-outline-secondary" onclick="this.nextElementSibling.stepDown()">-</button>
+                        <input type="number" class="form-control text-center" id="copies" name="copies" min="1" value="1" step="1">
+                        <button type="button" class="btn btn-outline-secondary" onclick="this.previousElementSibling.stepUp()">+</button>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="form-group">
+                    <label>Categories</label>
+                    <div class="d-flex flex-wrap">
+                        <div class="custom-control custom-checkbox mr-4">
+                            <input type="checkbox" class="custom-control-input" id="fiction" name="categories[]" value="Fiction">
+                            <label class="custom-control-label" for="fiction">Fiction</label>
+                        </div>
+                        <div class="custom-control custom-checkbox mr-4">
+                            <input type="checkbox" class="custom-control-input" id="non-fiction" name="categories[]" value="Non-fiction">
+                            <label class="custom-control-label" for="non-fiction">Non-fiction</label>
+                        </div>
+                        <div class="custom-control custom-checkbox mr-4">
+                            <input type="checkbox" class="custom-control-input" id="personal development" name="categories[]" value="Personal Development">
+                            <label class="custom-control-label" for="personal development">Personal Development</label>
+                        </div>
+                        <div class="custom-control custom-checkbox mr-4">
+                            <input type="checkbox" class="custom-control-input" id="science fiction" name="categories[]" value="Science Fiction">
+                            <label class="custom-control-label" for="science fiction">Science Fiction</label>
+                        </div>
+                        <div class="custom-control custom-checkbox mr-4">
+                            <input type="checkbox" class="custom-control-input" id="personal finance" name="categories[]" value="Personal Finance">
+                            <label class="custom-control-label" for="personal finance"> Personal Finance</label>
+                        </div>
+                        <div class="custom-control custom-checkbox mr-4">
+                            <input type="checkbox" class="custom-control-input" id="literacy fiction" name="categories[]" value="Literacy Fiction">
+                            <label class="custom-control-label" for="literacy fiction">Literacy Fiction</label>
+                        </div>
+                        <div class="custom-control custom-checkbox mr-4">
+                            <input type="checkbox" class="custom-control-input" id="litearcy" name="categories[]" value="Literature">
+                            <label class="custom-control-label" for="litearcy">Literature</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="form-group">
+                    <label for="photo">Insert Photograph</label>
+                    <input type="file" class="form-control-file" id="photo">
+                    <img id="photoPreview" class="img-thumbnail mt-3 d-none" alt="Photo Preview">
+                </div>
+
+                <!-- Buttons -->
+                <div class="text-center">
+                    <button type="reset" class="btn btn-outline-danger mr-3">Clear Form</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="text-center py-3 mt-4">
+        <p>&copy; 2024 Library Project. All rights reserved.</p>
+    </footer>
+    <script>
+    // Limit category selection to 3
+    const categories = document.querySelectorAll('input[name="categories[]"]');
+    categories.forEach((category) => {
+        category.addEventListener("change", () => {
+            const selected = Array.from(categories).filter((cat) => cat.checked);
+            const canSelectMore = selected.length < 3;
+
+            categories.forEach((cat) => {
+                if (!cat.checked) cat.disabled = !canSelectMore;
+            });
+        });
+    });
+
+    // Form validations and interactivity
+    const form = document.getElementById("bookForm");
+    const title = document.getElementById("title");
+    const author = document.getElementById("author");
+    const description = document.getElementById("description");
+    const year = document.getElementById("year");
+    const copies = document.getElementById("copies");
+    const condition = document.getElementById("condition");
+    const photoInput = document.getElementById("photo");
+    const photoPreview = document.getElementById("photoPreview");
+
+    // Populate the year dropdown dynamically
+    document.addEventListener("DOMContentLoaded", () => {
+        const currentYear = new Date().getFullYear();
+        const startYear = 1900;
+
+        for (let y = currentYear; y >= startYear; y--) {
+            const option = document.createElement("option");
+            option.value = y;
+            option.textContent = y;
+            year.appendChild(option);
+        }
+        
+    });
+
+    
+
+    // Conditional disabling of the year field
+    condition.addEventListener("change", () => {
+    if (condition.value === "unknown") {
+        year.disabled = true; // Disable the year field
+        year.value = ""; // Clear the year value
+        hiddenYear.value = "NULL"; // Set hidden input for unknown condition
+    } else {
+        year.disabled = false; // Enable the year field
+        hiddenYear.value = year.value; // Sync hidden input with year dropdown
+    }
+});
+
+year.addEventListener("change", () => {
+    hiddenYear.value = year.value; // Update hidden input when year changes
+});
+
+
+    // Validate form on submit
+    form.addEventListener("submit", (e) => {
+        let isValid = true;
+        const errors = [];
+
+        // Clear previous error messages
+        const previousErrors = form.querySelectorAll(".text-danger");
+        previousErrors.forEach((error) => error.remove());
+        const invalidFields = form.querySelectorAll(".is-invalid");
+        invalidFields.forEach((field) => field.classList.remove("is-invalid"));
+
+        // Validate title
+        const titlePattern = /^[a-zA-Z0-9.,'"-\s]+$/;
+        if (!title.value || !titlePattern.test(title.value)) {
+            isValid = false;
+            errors.push({ field: title, message: "Title is invalid." });
+        }
+
+        // Validate author
+        const authorPattern = /^[a-zA-Z0-9.,'"-\s]+$/;
+        if (!author.value || !authorPattern.test(author.value)) {
+            isValid = false;
+            errors.push({ field: author, message: "Author's name is invalid." });
+        }
+
+        // Validate description length
+        if (description.value.length > 300) {
+            isValid = false;
+            errors.push({ field: description, message: "Description exceeds 300 characters." });
+        }
+
+        // Validate year
+        if (condition.value !== "unknown") {
+            const yearValue = parseInt(year.value, 10);
+            if (isNaN(yearValue) || yearValue < 1900 || yearValue > new Date().getFullYear()) {
+                isValid = false;
+                errors.push({ field: year, message: "Year must be between 1900 and the current year." });
+            }
+        }
+
+        // Validate number of copies
+        if (copies.value <= 0) {
+            isValid = false;
+            errors.push({ field: copies, message: "Number of copies must be greater than 0." });
+        }
+
+        // Validate category selection
+        const selectedCategories = Array.from(categories).filter((cat) => cat.checked);
+        if (selectedCategories.length > 3) {
+            isValid = false;
+            errors.push({
+                field: categories[0].parentElement,
+                message: "Select up to 3 categories only.",
+            });
+        }
+
+        // Show errors or prevent submission
+        if (!isValid) {
+            e.preventDefault();
+            errors.forEach(({ field, message }) => {
+                field.classList.add("is-invalid");
+                field.insertAdjacentHTML("afterend", `<div class="text-danger">${message}</div>`);
+            });
+        }
+    });
+
+    // Photo preview logic
+    photoInput.addEventListener("change", () => {
+        const file = photoInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                photoPreview.src = e.target.result;
+                photoPreview.classList.remove("d-none");
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Clear form function
+    function clearForm() {
+        form.reset();
+        photoPreview.src = "";
+        photoPreview.classList.add("d-none");
+    }
+</script>
+
+</body>
+
+</html>

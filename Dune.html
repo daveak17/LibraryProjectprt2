@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Library Project: Discover, borrow, and explore your favorite books." />
+  <title>Dune</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="style.css" rel="stylesheet" />
+
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    main { flex: 1; }
+    footer {
+      background-color: #f8f9fa; position: relative; bottom: 0; width: 100%;
+      border-top: 1px solid #e9ecef;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="index.html">
+      <img src="images/logo.png" alt="Library Logo" class="navbar-logo" />
+      e-Shelf
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="insert_book.html">Insert Book</a></li>
+        <li class="nav-item"><a class="nav-link" href="search_results.php">Search Results</a></li>
+      </ul>
+      <form class="form-inline ml-auto" action="search_results.php" method="get" role="search">
+        <input class="form-control mr-sm-2" type="search" name="query" placeholder="Search by title" aria-label="Search for books" />
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mt-5">
+    <h2 class="text-center">Dune</h2>
+    <div class="card mx-auto">
+      <img src="images/book6.jpg" class="card-img-top" alt="Cover of the book 'Dune'">
+      <div class="card-body">
+        <h5 class="card-title"><strong>Author:</strong> Frank Herbert</h5>
+        <p class="card-text">
+          <strong>Summary:</strong> <em>Dune</em> by <em>Frank Herbert</em> is a science fiction epic set in the distant future on the desert planet of Arrakis. The story follows Paul Atreides, the young heir to House Atreides, which is given control over Arrakis, the only source of "spice," a vital substance for space travel and longevity. This strategic control of the planet places House Atreides at odds with their bitter rivals, House Harkonnen, who previously ruled Arrakis.
+          <br><br>
+          As political tensions escalate, the Atreides family is betrayed, and Paul is forced to flee into the desert with his mother, Jessica. They find refuge with the Fremen, the planet's native people, who have long adapted to the harsh desert environment. Paul soon discovers that he may be the Kwisatz Haderach, a prophesied superbeing with the ability to see the future.
+          <br><br>
+          As Paul’s powers grow, he is torn between accepting his destiny as a leader and the potential consequences of wielding such immense power. Dune explores themes of politics, religion, ecology, and the consequences of absolute power, making it a deeply philosophical reflection on human nature and the complex interplay of control, survival, and belief.
+        </p>
+        <h6><strong>Published:</strong> 1965</h6>
+        <p><strong>Category:</strong> Science Fiction</p>
+        <p><strong>Available Copies:</strong> <span id="availableCopies">...</span></p>
+        <button class="btn btn-primary btn-block" id="borrowButton" disabled>Borrow</button>
+        <p class="mt-2" id="borrowFeedback"></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-3">
+    <p>&copy; 2024 Library Project. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Load live copies on first paint
+    document.addEventListener('DOMContentLoaded', async () => {
+      const availableCopiesEl = document.getElementById('availableCopies');
+      const borrowBtn = document.getElementById('borrowButton');
+
+      try {
+        // Prefer using book_id if you know it: const params = new URLSearchParams({ book_id: 59 });
+        const params = new URLSearchParams({ book_title: 'Dune' });
+        const resp = await fetch('book_info.php?' + params.toString(), {
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) throw new Error(data.error || 'Fetch failed');
+
+        const copies = parseInt(data.book.copies, 10);
+        availableCopiesEl.textContent = Number.isNaN(copies) ? '—' : copies;
+        borrowBtn.disabled = !(copies > 0);
+      } catch (err) {
+        console.error(err);
+        availableCopiesEl.textContent = '—';
+        borrowBtn.disabled = true;
+      }
+    });
+
+    // Borrow handler
+    document.getElementById('borrowButton').addEventListener('click', async function (e) {
+      e.preventDefault();
+
+      const bookTitle = "Dune"; // Using title; posting book_id is even safer if you add it later
+      const availableCopiesEl = document.getElementById('availableCopies');
+      const feedbackEl = document.getElementById('borrowFeedback');
+      const btn = this;
+
+      feedbackEl.classList.remove('text-success', 'text-danger', 'text-muted');
+
+      // UI: prevent double clicks while processing
+      btn.disabled = true;
+      feedbackEl.textContent = "Processing...";
+      feedbackEl.classList.add('text-muted');
+
+      try {
+        const body = new URLSearchParams({ book_title: bookTitle }).toString();
+        const resp = await fetch('borrow.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        });
+
+        const text = await resp.text();
+
+        feedbackEl.classList.remove('text-muted');
+        feedbackEl.classList.add(resp.ok ? 'text-success' : 'text-danger');
+        feedbackEl.textContent = text;
+
+        if (resp.ok) {
+          // Prefer exact number if backend returns: "Remaining copies: N"
+          const match = text.match(/Remaining\s+copies:\s*(\d+)/i);
+          if (match) {
+            const newCopies = parseInt(match[1], 10);
+            if (!Number.isNaN(newCopies)) {
+              availableCopiesEl.textContent = newCopies;
+              btn.disabled = newCopies <= 0;
+              return;
+            }
+          }
+          // Fallback: optimistic -1
+          const current = parseInt(availableCopiesEl.textContent, 10);
+          if (!Number.isNaN(current) && current > 0) {
+            const next = current - 1;
+            availableCopiesEl.textContent = next;
+            btn.disabled = next <= 0;
+          }
+        } else {
+          if (/No\s+copies\s+available/i.test(text)) {
+            btn.disabled = true;
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        feedbackEl.classList.remove('text-muted');
+        feedbackEl.classList.add('text-danger');
+        feedbackEl.textContent = "An error occurred. Please try again.";
+      } finally {
+        // Re-enable only if we still have copies
+        if (parseInt(availableCopiesEl.textContent, 10) > 0) {
+          btn.disabled = false;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

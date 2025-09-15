@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Library Project: Discover, borrow, and explore your favorite books.">
+  <title>Atomic Habits</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="index.html">
+      <img src="images/logo.png" alt="Library Logo" class="navbar-logo" />
+      e-Shelf
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="insert_book.html">Insert Book</a></li>
+        <li class="nav-item"><a class="nav-link" href="search_results.php">Search Results</a></li>
+      </ul>
+      <form class="form-inline ml-auto" action="search_results.php" method="get" role="search">
+        <input
+          class="form-control mr-sm-2"
+          type="search"
+          name="query"
+          placeholder="Search by title"
+          aria-label="Search for books"
+        />
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container mt-5">
+    <h2 class="text-center">Atomic Habits</h2>
+    <div class="card mx-auto">
+      <img src="images/book2.png" class="card-img-top" alt="Cover of the book 'Atomic Habits'">
+      <div class="card-body">
+        <h5 class="card-title"><strong>Author:</strong> James Clear</h5>
+        <p class="card-text">
+          <strong>Summary:</strong> <em>Atomic Habits</em> by <em>James Clear</em> is a practical guide to building good habits, breaking bad ones, and creating lasting change. The book highlights the power of small, incremental improvements—"atomic" changes—that compound over time to produce significant results. Clear emphasizes the importance of designing your environment to make good habits visible and accessible, attaching habits to positive emotions or rewards, starting small to reduce barriers, and reinforcing habits with immediate rewards or a sense of accomplishment.
+          <br><br>
+          The book delves into the science of habit formation, showing how habits shape identity and how systems, rather than sheer willpower, are the key to achieving goals. Through actionable strategies and engaging anecdotes, it encourages readers to focus on consistency over perfection and create a lifestyle aligned with their long-term aspirations.
+        </p>
+        <h6><strong>Published:</strong> 2018</h6>
+        <p><strong>Category:</strong> Personal Development</p>
+        <p><strong>Available Copies:</strong> <span id="availableCopies">...</span></p>
+        <button class="btn btn-primary btn-block" id="borrowButton" disabled>Borrow</button>
+        <p class="mt-2" id="borrowFeedback"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3">
+    <p>&copy; 2024 Library Project. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Load live copies on first paint
+    document.addEventListener('DOMContentLoaded', async () => {
+      const availableCopiesEl = document.getElementById('availableCopies');
+      const borrowBtn = document.getElementById('borrowButton');
+
+      try {
+        // You can switch to book_id if you prefer: { book_id: 60 }
+        const params = new URLSearchParams({ book_title: 'Atomic Habits' });
+        const resp = await fetch('book_info.php?' + params.toString(), {
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) throw new Error(data.error || 'Fetch failed');
+
+        const copies = parseInt(data.book.copies, 10);
+        availableCopiesEl.textContent = Number.isNaN(copies) ? '—' : copies;
+        borrowBtn.disabled = !(copies > 0);
+      } catch (err) {
+        console.error(err);
+        availableCopiesEl.textContent = '—';
+        borrowBtn.disabled = true;
+      }
+    });
+
+    // Borrow handler
+    document.getElementById('borrowButton').addEventListener('click', async function (e) {
+      e.preventDefault();
+
+      const bookTitle = "Atomic Habits"; // using title; book_id is even safer if you add it later
+      const availableCopiesEl = document.getElementById('availableCopies');
+      const feedbackEl = document.getElementById('borrowFeedback');
+      const btn = this;
+
+      feedbackEl.classList.remove('text-success', 'text-danger', 'text-muted');
+
+      btn.disabled = true;
+      feedbackEl.textContent = "Processing...";
+      feedbackEl.classList.add('text-muted');
+
+      try {
+        const body = new URLSearchParams({ book_title: bookTitle }).toString();
+        const resp = await fetch('borrow.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body
+        });
+
+        const text = await resp.text();
+
+        feedbackEl.classList.remove('text-muted');
+        feedbackEl.classList.add(resp.ok ? 'text-success' : 'text-danger');
+        feedbackEl.textContent = text;
+
+        if (resp.ok) {
+          // Prefer exact number if backend returned: "Remaining copies: N"
+          const match = text.match(/Remaining\s+copies:\s*(\d+)/i);
+          if (match) {
+            const newCopies = parseInt(match[1], 10);
+            if (!Number.isNaN(newCopies)) {
+              availableCopiesEl.textContent = newCopies;
+              btn.disabled = newCopies <= 0;
+              return;
+            }
+          }
+          // Fallback: optimistic -1
+          const current = parseInt(availableCopiesEl.textContent, 10);
+          if (!Number.isNaN(current) && current > 0) {
+            const next = current - 1;
+            availableCopiesEl.textContent = next;
+            btn.disabled = next <= 0;
+          }
+        } else {
+          if (/No\s+copies\s+available/i.test(text)) btn.disabled = true;
+        }
+      } catch (err) {
+        console.error(err);
+        feedbackEl.classList.remove('text-muted');
+        feedbackEl.classList.add('text-danger');
+        feedbackEl.textContent = "An error occurred. Please try again.";
+      } finally {
+        // Re-enable only if we still have copies
+        if (parseInt(availableCopiesEl.textContent, 10) > 0) {
+          btn.disabled = false;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
